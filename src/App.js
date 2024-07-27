@@ -1,30 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function DictionaryApp() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [definition, setDefinition] = useState('');
+  // Define a dictionary using state
+  const [dictionary, setDictionary] = useState([
+    {
+      word: "React",
+      meaning: "A JavaScript library for building user interfaces.",
+    },
+    { word: "Component", meaning: "A reusable building block in React." },
+    { word: "State", meaning: "An object that stores data for a component." },
+    // Add more words and meanings as needed
+  ]);
 
-  const handleSearch = async () => {
-    try {
-      // Replace 'YOUR_API_KEY' with your actual API key
-      const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${searchTerm}`, {
-        headers: {
-          'apikey': 'YOUR_API_KEY'
-        }
-      });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResult, setSearchResult] = useState("");
 
-      const data = await response.json();
-
-      if (data.length > 0) {
-        // Extract the definition from the API response
-        const extractedDefinition = data[0].meanings[0].definitions[0].definition;
-        setDefinition(extractedDefinition);
-      } else {
-        setDefinition('No definition found.');
-      }
-    } catch (error) {
-      setDefinition('Error fetching definition.');
-      console.error('Error:', error);
+  // Function to handle word search
+  const handleSearch = () => {
+    const foundWord = dictionary.find(
+      (entry) => entry.word.toLowerCase() === searchTerm.toLowerCase()
+    );
+    if (foundWord) {
+      setSearchResult(foundWord.meaning);
+    } else {
+      setSearchResult("Word not found in the dictionary.");
     }
   };
 
@@ -34,14 +33,16 @@ function DictionaryApp() {
       <div>
         <input
           type="text"
-          placeholder="Component"
+          placeholder="Search for a word..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <button onClick={handleSearch}>Search</button>
       </div>
-      <h2>Definition:</h2>
-      <p>{definition}</p>
+      <div>
+        <strong>Definition:</strong>
+        <p>{searchResult}</p>
+      </div>
     </div>
   );
 }
